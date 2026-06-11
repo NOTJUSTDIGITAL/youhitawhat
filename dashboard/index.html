@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claims Department — You Hit a WHAT</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAEEF1; --card:#FBFCFD; --ink:#16263D; --ink-soft:#5A6B80;
+    --line:#C7D0D9; --amber:#F2A900; --red:#C2362B; --green:#2E7D4F;
+    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --disp:'Oswald','Arial Narrow',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;min-height:100vh}
+
+  /* ---------- header ---------- */
+  header{background:var(--ink);color:#fff;border-bottom:4px solid var(--amber)}
+  .head-in{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .head-in h1{font-family:var(--disp);font-weight:600;font-size:26px;letter-spacing:.06em;text-transform:uppercase}
+  .head-in h1 em{font-style:normal;color:var(--amber)}
+  .head-tag{font-family:var(--mono);font-size:12px;color:#B9C4D2;letter-spacing:.04em}
+  #conn-pill{margin-left:auto;font-family:var(--mono);font-size:12px;padding:4px 10px;border:1px solid #3A4B63;border-radius:999px;color:#B9C4D2}
+  #conn-pill.on{border-color:var(--green);color:#9FD9B6}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:330px 1fr;gap:24px}
+  @media(max-width:860px){.wrap{grid-template-columns:1fr}}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:20px}
+  .panel h2{font-family:var(--disp);font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+    border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline}
+  .panel h2 .form-no{font-family:var(--mono);font-size:11px;color:var(--ink-soft);font-weight:400;letter-spacing:0}
+
+  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin:12px 0 4px}
+  input[type=text],input[type=password],select,textarea{
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+    font-family:var(--sans);font-size:14px;color:var(--ink)}
+  input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  textarea{resize:vertical;min-height:64px}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px}
+
+  button{cursor:pointer;border:none;border-radius:4px;font-family:var(--disp);font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;font-size:13px;padding:10px 16px}
+  .btn-primary{background:var(--ink);color:#fff;width:100%;margin-top:16px}
+  .btn-primary:hover{background:#23364F}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12px;padding:7px 12px}
+  .btn-approve{background:var(--green);color:#fff}
+  .btn-reject{background:#fff;border:1px solid var(--red);color:var(--red)}
+  .btn-del{background:transparent;color:var(--ink-soft);font-size:11px;padding:7px 8px}
+  button:disabled{opacity:.45;cursor:not-allowed}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{font-family:var(--mono);font-size:12px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink-soft)}
+  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tab .n{font-weight:500}
+
+  /* ---------- claim cards ---------- */
+  .claim{background:var(--card);border:1px solid var(--line);border-radius:6px;margin-bottom:16px;
+    display:grid;grid-template-columns:170px 1fr;overflow:hidden;position:relative}
+  @media(max-width:560px){.claim{grid-template-columns:1fr}}
+  .claim-media{background:#0E1826;display:flex;align-items:center;justify-content:center;min-height:130px}
+  .claim-media img{width:100%;height:100%;object-fit:cover;display:block;max-height:200px}
+  .claim-media .reel-mark{font-family:var(--mono);font-size:11px;color:#B9C4D2;text-align:center;padding:12px}
+  .claim-body{padding:14px 16px}
+  .claim-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .claim-no{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
+  .claim-car{font-family:var(--disp);font-size:18px;font-weight:600;letter-spacing:.02em}
+  .badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;border:1px solid var(--line);border-radius:3px;padding:2px 6px;color:var(--ink-soft)}
+  .claim-meta{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:4px}
+  .claim-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .claim textarea{margin-top:10px;font-size:13px}
+
+  /* signature: rubber stamp */
+  .stamp{position:absolute;top:10px;right:12px;transform:rotate(-7deg);
+    font-family:var(--disp);font-weight:600;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    border:3px double currentColor;border-radius:4px;padding:3px 10px;opacity:.92;pointer-events:none;background:rgba(251,252,253,.85)}
+  .stamp.approved{color:var(--green)} .stamp.posted{color:var(--ink)}
+  .stamp.rejected{color:var(--red)} .stamp.pending{color:var(--amber)}
+
+  .empty{border:1px dashed var(--line);border-radius:6px;padding:36px 20px;text-align:center;color:var(--ink-soft)}
+  .empty b{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px;color:var(--ink)}
+
+  #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    font-family:var(--mono);font-size:13px;padding:10px 18px;border-radius:6px;display:none;max-width:90vw}
+  #toast.err{background:var(--red)}
+  .savebar{position:sticky;top:0;z-index:5;background:var(--amber);color:var(--ink);border-radius:6px;
+    padding:10px 14px;margin-bottom:16px;display:none;align-items:center;gap:12px;font-weight:600}
+  .savebar button{background:var(--ink);color:#fff;margin-left:auto}
+  @media (prefers-reduced-motion: no-preference){
+    .claim{transition:box-shadow .15s}.claim:hover{box-shadow:0 2px 10px rgba(22,38,61,.10)}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <h1>Claims Department <em>— You Hit a WHAT</em></h1>
+    <span class="head-tag">FORM IG-114 · LUXURY COLLISION REVIEW</span>
+    <span id="conn-pill">● not connected</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div class="panel" id="connect-panel">
+      <h2>Adjuster Login <span class="form-no">SEC. 1</span></h2>
+      <label for="gh-owner">GitHub owner</label>
+      <input type="text" id="gh-owner" placeholder="your-username">
+      <label for="gh-repo">Repository</label>
+      <input type="text" id="gh-repo" placeholder="youhitawhat">
+      <label for="gh-branch">Branch</label>
+      <input type="text" id="gh-branch" value="main">
+      <label for="gh-token">Fine-grained access token</label>
+      <input type="password" id="gh-token" placeholder="github_pat_…" autocomplete="off">
+      <p class="hint">Needs Contents read/write on this repo only. Kept in memory for this session — never saved, never sent anywhere but api.github.com.</p>
+      <button class="btn-primary" id="btn-connect">Open the case file</button>
+    </div>
+
+    <div class="panel" id="new-claim-panel" style="display:none">
+      <h2>File a New Claim <span class="form-no">SEC. 2</span></h2>
+      <label for="nc-file">Upload media to repo</label>
+      <input type="file" id="nc-file" accept="image/jpeg,image/png,video/mp4">
+      <p class="hint">…or paste a public URL instead:</p>
+      <input type="text" id="nc-url" placeholder="https://…/crash.jpg">
+      <label for="nc-type">Type</label>
+      <select id="nc-type">
+        <option value="image">Image post</option>
+        <option value="reel">Reel (video)</option>
+      </select>
+      <label for="nc-car">Vehicle struck</label>
+      <input type="text" id="nc-car" placeholder="Lamborghini Huracán">
+      <label for="nc-credit">Source credit (with permission)</label>
+      <input type="text" id="nc-credit" placeholder="@original_poster — optional">
+      <label for="nc-caption">Caption override</label>
+      <textarea id="nc-caption" placeholder="Leave blank and the bot writes one at post time"></textarea>
+      <button class="btn-primary" id="btn-add">Submit claim</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="savebar" id="savebar">
+      Unsaved changes to the case file
+      <button id="btn-save">Save to repo</button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div id="claims"></div>
+  </main>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const API = 'https://api.github.com';
+
+  const state = {
+    owner:'', repo:'', branch:'main', token:'',
+    queue:null, sha:null, dirty:false, tab:'pending'
+  };
+  const STATUSES = ['pending','approved','posted','rejected'];
+
+  /* ---------- helpers ---------- */
+  function toast(msg, err=false){
+    const t = $('toast'); t.textContent = msg;
+    t.className = err ? 'err' : ''; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(()=> t.style.display='none', 4000);
+  }
+  function gh(path, opts={}){
+    return fetch(API + path, {
+      ...opts,
+      headers:{
+        'Authorization':'Bearer ' + state.token,
+        'Accept':'application/vnd.github+json',
+        ...(opts.headers||{})
+      }
+    });
+  }
+  function b64encode(str){
+    const bytes = new TextEncoder().encode(str);
+    let bin=''; bytes.forEach(b => bin += String.fromCharCode(b));
+    return btoa(bin);
+  }
+  function b64decode(b64){
+    const bin = atob(b64.replace(/\n/g,''));
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+  function fileToB64(file){
+    return new Promise((res,rej)=>{
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = () => rej(new Error('Could not read file'));
+      r.readAsDataURL(file);
+    });
+  }
+  const fmtDate = iso => iso ? iso.replace('T',' ').replace(/\+.*|Z/,'') + ' UTC' : '';
+  const claimNo = id => 'CLAIM #' + String(id).padStart(4,'0');
+
+  function markDirty(){ state.dirty = true; $('savebar').style.display = 'flex'; }
+  function markClean(){ state.dirty = false; $('savebar').style.display = 'none'; }
+
+  /* ---------- repo I/O ---------- */
+  async function loadQueue(){
+    const r = await gh(`/repos/${state.owner}/${state.repo}/contents/queue.json?ref=${state.branch}`);
+    if(!r.ok) throw new Error(r.status === 404 ? 'queue.json not found in that repo/branch' : 'GitHub said ' + r.status);
+    const data = await r.json();
+    state.sha = data.sha;
+    state.queue = JSON.parse(b64decode(data.content));
+    if(!Array.isArray(state.queue.items)) state.queue.items = [];
+  }
+
+  async function saveQueue(){
+    const body = {
+      message:'dashboard: update claims queue',
+      content: b64encode(JSON.stringify(state.queue, null, 2) + '\n'),
+      sha: state.sha, branch: state.branch
+    };
+    const r = await gh(`/repos/${state.owner}/${state.repo}/contents/queue.json`,
+      { method:'PUT', body: JSON.stringify(body) });
+    if(r.status === 409){ throw new Error('Conflict — the bot updated the queue. Reconnect to reload, then redo your change.'); }
+    if(!r.ok) throw new Error('Save failed: HTTP ' + r.status);
+    const data = await r.json();
+    state.sha = data.content.sha;
+    markClean();
+    toast('Case file saved.');
+  }
+
+  async function uploadMedia(file){
+    const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g,'-');
+    const path = `media/${Date.now()}-${safe}`;
+    const body = {
+      message:'dashboard: upload ' + safe,
+      content: await fileToB64(file),
+      branch: state.branch
+    };
+    const r = await gh(`/repos/${state.owner}/${state.repo}/contents/${path}`,
+      { method:'PUT', body: JSON.stringify(body) });
+    if(!r.ok) throw new Error('Upload failed: HTTP ' + r.status + (file.size > 20e6 ? ' (file may be too large for the API)' : ''));
+    return `https://raw.githubusercontent.com/${state.owner}/${state.repo}/${state.branch}/${path}`;
+  }
+
+  /* ---------- rendering ---------- */
+  function render(){
+    const counts = Object.fromEntries(STATUSES.map(s => [s, 0]));
+    state.queue.items.forEach(i => { if(counts[i.status] !== undefined) counts[i.status]++; });
+
+    $('tabs').innerHTML = STATUSES.map(s =>
+      `<button class="tab ${state.tab===s?'active':''}" data-tab="${s}">${s} <span class="n">(${counts[s]})</span></button>`
+    ).join('');
+    $('tabs').querySelectorAll('.tab').forEach(b =>
+      b.onclick = () => { state.tab = b.dataset.tab; render(); });
+
+    const items = state.queue.items
+      .filter(i => i.status === state.tab)
+      .sort((a,b) => (a.added_at||'').localeCompare(b.added_at||''));
+
+    if(!items.length){
+      $('claims').innerHTML = `<div class="empty"><b>No ${state.tab} claims</b>
+        ${state.tab==='pending' ? 'File a new claim on the left to get started.' :
+          state.tab==='approved' ? 'Approve a pending claim and the bot posts the oldest one each run.' :
+          'Nothing here yet.'}</div>`;
+      return;
+    }
+
+    $('claims').innerHTML = items.map(i => `
+      <article class="claim" data-id="${i.id}">
+        <div class="stamp ${i.status}">${i.status}</div>
+        <div class="claim-media">${
+          i.type === 'reel'
+            ? `<div class="reel-mark">▶ REEL<br>${escapeHtml(shortUrl(i.media_url))}</div>`
+            : `<img src="${escapeAttr(i.media_url)}" alt="${escapeAttr(i.car_model||'claim media')}" loading="lazy">`
+        }</div>
+        <div class="claim-body">
+          <div class="claim-top">
+            <span class="claim-no">${claimNo(i.id)}</span>
+            <span class="claim-car">${escapeHtml(i.car_model || 'Unidentified vehicle')}</span>
+            <span class="badge">${i.type === 'reel' ? 'REEL' : 'IMAGE'}</span>
+          </div>
+          <div class="claim-meta">
+            filed ${fmtDate(i.added_at)}${i.source_credit ? ' · credit: ' + escapeHtml(i.source_credit) : ''}
+            ${i.status==='posted' ? '<br>posted ' + fmtDate(i.posted_at) : ''}
+          </div>
+          ${i.status==='posted'
+            ? (i.posted_caption ? `<textarea readonly>${escapeHtml(i.posted_caption)}</textarea>` : '')
+            : `<textarea data-act="caption" placeholder="Caption override — blank means the bot writes one">${escapeHtml(i.caption_override||'')}</textarea>`}
+          <div class="claim-actions">
+            ${i.status==='pending' ? `<button class="btn-approve" data-act="approve">Approve</button>
+                                      <button class="btn-reject" data-act="reject">Reject</button>` : ''}
+            ${i.status==='approved' ? `<button class="btn-ghost" data-act="unapprove">Back to pending</button>` : ''}
+            ${i.status==='rejected' ? `<button class="btn-ghost" data-act="unapprove">Reopen</button>` : ''}
+            ${i.status!=='posted' ? `<button class="btn-del" data-act="delete">Delete record</button>` : ''}
+          </div>
+        </div>
+      </article>`).join('');
+
+    $('claims').querySelectorAll('[data-act]').forEach(el => {
+      const card = el.closest('.claim');
+      const item = state.queue.items.find(x => String(x.id) === card.dataset.id);
+      if(el.dataset.act === 'caption'){
+        el.onchange = () => { item.caption_override = el.value; markDirty(); };
+      } else {
+        el.onclick = () => {
+          if(el.dataset.act === 'approve')   item.status = 'approved';
+          if(el.dataset.act === 'reject')    item.status = 'rejected';
+          if(el.dataset.act === 'unapprove') item.status = 'pending';
+          if(el.dataset.act === 'delete'){
+            if(!confirm('Delete this claim record? (Uploaded media stays in the repo.)')) return;
+            state.queue.items = state.queue.items.filter(x => x !== item);
+          }
+          markDirty(); render();
+        };
+      }
+    });
+  }
+
+  const escapeHtml = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const escapeAttr = escapeHtml;
+  const shortUrl = u => { try{ const x = new URL(u); return x.pathname.split('/').pop(); }catch{ return u; } };
+
+  /* ---------- actions ---------- */
+  $('btn-connect').onclick = async () => {
+    state.owner  = $('gh-owner').value.trim();
+    state.repo   = $('gh-repo').value.trim();
+    state.branch = $('gh-branch').value.trim() || 'main';
+    state.token  = $('gh-token').value.trim();
+    if(!state.owner || !state.repo || !state.token) return toast('Owner, repo and token are all required.', true);
+    $('btn-connect').disabled = true;
+    try{
+      await loadQueue();
+      $('conn-pill').textContent = `● ${state.owner}/${state.repo}`;
+      $('conn-pill').classList.add('on');
+      $('new-claim-panel').style.display = 'block';
+      markClean(); render();
+      toast('Case file opened.');
+    }catch(e){ toast(e.message, true); }
+    finally{ $('btn-connect').disabled = false; }
+  };
+
+  $('btn-add').onclick = async () => {
+    if(!state.queue) return toast('Connect first.', true);
+    const file = $('nc-file').files[0];
+    let url = $('nc-url').value.trim();
+    if(!file && !url) return toast('Upload a file or paste a URL.', true);
+    $('btn-add').disabled = true;
+    try{
+      if(file){
+        toast('Uploading media to the repo…');
+        url = await uploadMedia(file);
+        if(file.type.startsWith('video')) $('nc-type').value = 'reel';
+      }
+      const ids = state.queue.items.map(i => Number(i.id)||0);
+      state.queue.items.push({
+        id: (ids.length ? Math.max(...ids) : 0) + 1,
+        type: $('nc-type').value,
+        media_url: url,
+        car_model: $('nc-car').value.trim(),
+        source_credit: $('nc-credit').value.trim(),
+        caption_override: $('nc-caption').value.trim(),
+        status: 'pending',
+        added_at: new Date().toISOString().slice(0,19) + 'Z',
+        posted_at: null
+      });
+      ['nc-url','nc-car','nc-credit','nc-caption'].forEach(id => $(id).value='');
+      $('nc-file').value = '';
+      state.tab = 'pending';
+      markDirty(); render();
+      await saveQueue();           // auto-save new claims immediately
+      toast('Claim filed and saved.');
+    }catch(e){ toast(e.message, true); }
+    finally{ $('btn-add').disabled = false; }
+  };
+
+  $('btn-save').onclick = async () => {
+    $('btn-save').disabled = true;
+    try{ await saveQueue(); }
+    catch(e){ toast(e.message, true); }
+    finally{ $('btn-save').disabled = false; }
+  };
+
+  window.addEventListener('beforeunload', e => {
+    if(state.dirty){ e.preventDefault(); e.returnValue = ''; }
+  });
+})();
+</script>
+</body>
+</html>
