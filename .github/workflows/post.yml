@@ -1,0 +1,41 @@
+name: post-to-instagram
+
+on:
+  schedule:
+    # 17:00 UTC ≈ 1pm New York. Add more lines for more posts per day.
+    - cron: "0 17 * * *"
+  workflow_dispatch: {}   # lets you trigger a post manually from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ig-poster
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: Run posting bot
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python bot/post_bot.py
+
+      - name: Commit queue updates
+        run: |
+          git config user.name "claims-bot"
+          git config user.email "claims-bot@users.noreply.github.com"
+          git add queue.json
+          git diff --cached --quiet || git commit -m "claims-bot: mark item as posted"
+          git push
